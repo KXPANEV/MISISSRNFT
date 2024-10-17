@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFT Minting</title>
+</head>
+<body>
+<h1>Выпуск и отзыв NFT</h1>
+
+<h2>Выпуск NFT</h2>
+<input type="text" id="mintAddress" placeholder="Ethereum адрес" />
+<input type="text" id="nftName" placeholder="Имя" />
+<input type="text" id="nftSurname" placeholder="Фамилия" />
+<input type="text" id="nftWorkplace" placeholder="Место работы" />
+<input type="text" id="nftImage" placeholder="URL изображения" />
+<button id="mintButton">Выпустить NFT</button>
+
+<h2>Отзыв NFT</h2>
+<input type="number" id="revokeTokenId" placeholder="ID токена" />
+<button id="revokeButton">Отозвать NFT</button>
+
+<script>
+    document.getElementById('mintButton').onclick = async () => {
+        try {
+            const address = document.getElementById('mintAddress').value;
+            const name = document.getElementById('nftName').value;
+            const surname = document.getElementById('nftSurname').value;
+            const workplace = document.getElementById('nftWorkplace').value;
+            const imageUrl = document.getElementById('nftImage').value;
+
+            const response = await fetch('http://localhost:3000/mint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ address, name, surname, workplace, imageUrl }),
+            });
+
+            const data = await response.json();
+            console.log(data);
+
+            if (!response.ok) {
+                alert(data.message || "Произошла ошибка при выпуске NFT.");
+            } else {
+                alert("NFT успешно выпущен!");
+            }
+        } catch (error) {
+            console.error("Ошибка:", error);
+            alert("Произошла ошибка при выпуске NFT.");
+        }
+    };
+
+    document.getElementById('revokeButton').onclick = async () => {
+        const tokenId = document.getElementById('revokeTokenId').value;
+        const response = await fetch('http://localhost:3000/revoke', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ tokenId }),
+        });
+        const data = await response.json();
+        console.log(data);
+    };
+</script>
+</body>
+</html>
