@@ -43,14 +43,17 @@ app.post("/mint", async (req, res) => {
 app.post("/revoke", async (req, res) => {
     try {
         const { tokenId } = req.body; // Получаем идентификатор токена из тела запроса
-
+        const numberTokenId = Number(tokenId);
         // Проверяем, является ли tokenId корректным
-        if (!Number.isInteger(tokenId) || tokenId < 0) {
+        if (!Number.isInteger(numberTokenId) || numberTokenId < 0) {
             return res.status(400).send({ error: "Invalid token ID" });
         }
 
         const tx = await contract.revoke(tokenId);
         await tx.wait();
+        const tx_2 = await contract.burn(tokenId);
+        await tx_2.wait();
+
         res.send({ status: "Revoked", tx });
     } catch (error) {
         console.error("Revoke Error:", error);
